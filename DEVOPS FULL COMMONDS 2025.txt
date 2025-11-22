@@ -1,0 +1,643 @@
+__________________________DEVOPS FULL COMMONDS______________________
+
+
+
+____________GIT & GITHUB___________
+ 
+  _______GIT INSTALLATION_______
+
+1.sudo su -    ec2 user to root user
+2.yum install git -y    install git in server
+3.ls -al   its shows hidden files
+4.git init .  to create empty repository in the server remote repo
+5.ls -al its show's hidden files
+
+
+_____STEPS TO COMMIT A FILE ___________
+
+in the working directory we can create files and folders
+
+
+1.touch f1       create a empty file
+2.cat>f1         to setup a content in f1 file
+3.enter  control+d to save file
+4.git status to check file status that file is untrock
+5.git add f1 it will track and its comes under stagging area
+6.git commit -m " file1" f1
+7.git log its shows commit messages
+
+________CONFIGURATION OF USER__________________
+
+
+IF YOU WANT GIVE YOUR USERNAME AND E-MAIL ID TO THOSE COMMITS THAN,
+
+1.git config user.name "vamshi"
+2.git config user.email "patelvamshimi@gmail.com"
+3.touch f2 create 2nd file 
+4.cat>f2 to writte details in that file
+5.enter and control+d save the file
+6.git add f2 add that file to stagging area
+7.git commit -m "file2" f2
+8.git log to see commit messages
+
+
+  ________create multiple files and add , commit _____________
+
+1.touch vamshi{1..4}
+2.git add vamshi*  track all 4 files 
+3.git commit -m "commit message" vamshi*
+4.git log to see your commit messages
+
+_______igonring content_________
+
+1.touch raghu{1..4}
+2.files will not track and commit just file will want in the working directory
+3.ll
+4.it will usefull when you dont want to truk some specific files then we use a file called .gitignore
+
+5..>>> vi .gitignore its help full all files will be ignored.
+6.git status its shows truck and untruck files
+7.vi .gitignore go this file
+8.raghu* if you want to ignore all file then give this 
+9.git status check files 
+10.raghu 1 
+11.raghu2 if you want to igone 2 files then give
+
+
+______GIT BRANCH ______
+
+1.TOO SEE CURRENT BRUNCH    =git branch
+2.TOO ADD NEW BRANCH        =git branch vamshi =vamshi is branch name
+3.TO SWITCH BRANCH 1 BRANCH TO ANOTHER BRANCH =git checkout vamshi
+4.TO CREATE AND SWITCH AT A TIME =git checkout -b vamshi
+5.TO RENAME A BRANCH             =git branch -m vamshi madhu =vamshi is old name madhu is new branch name
+6.TO DELETE A BRANCH             =git branch -d vamshi
+
+7.. to remove all files =rm -rf *
+
+8.git log
+
+
+
+
+9.git branch vamshi    create vamshi branch
+10.git branch    to see your current branch
+11.git checkout vamshi    ==to switch vamshi branch
+12.git branch
+13.create files in the vamshi branch touch vamshi{1.3}
+14 git add vamshi* add that files
+15.git commit -m "vamshi's commits" vamshi*
+16.git log its shows commits messages
+
+
+to send files git to git hub
+
+1.create files and add and commit
+2.git remote add origin----github url
+3.git push origin master ====master is branch name
+4.username vamshi420
+5.password token
+
+___________________MAVEN IS A BUILD TOOL AND MANGE DEPENDENSIS_____________
+
+1.LAUNCH ONE EC2 INSTANCE AND CONNECT WITH MOBAXTREAM
+2.GO EC2 USER TO ROOT USER
+3.CD /OPT/
+4.DOWNLOD JAVA yum what provides java
+5.download maven with help of maven repository in the internet
+6.set inveronment variable with help of vim .bash_profile 
+export M2_HOME=/opt/apache-maven-3.9.9
+export PATH=$PATH:$M2_HOME/bin SAVE FAILE
+7.downlod source code with help of mvn archetype:generate
+8.now compile code mvn compile
+9.now test code mvn test
+10.mvn package it will converts jar and war file
+11. mvn install it can install in the local repo
+12.if you want take source code in the git hub the you can clone repository 
+13. yum install git -y and git clone repository url
+
+
+
+
+__________________set up jenkins dashboard ________________________
+_________jenkins-master________
+
+1.launch 1 server
+2.download jenkins with help repository and key in the internet wget jenkins.io
+3download yum install git maven jenkins -y
+4.download java yum what provides java 
+5.systemctl restart jenkins
+6.systemctl status jenkins
+7. vim /etc/passwd to change last line /bin/false to /bin/bash
+8.cat /etc/passwd to check users
+9.passwd jenkins to create password to jenkins user
+10.visudo give root privilleges permmissions to jenkins user yyp=copy jenkins all [all] NOPASSWD:ALL
+11.vim /etc/ssh/sshd_config configure sshd for password purpose authentication yes
+12.systemctl restart sshd   restart sshd
+13 systemctl status sshd check status
+
+__________LOGIN TO SLAVE _____________
+
+1.launch 1 ec2 instance
+2.connect with mobaxtream and sudo su -
+3.useradd jenkins
+4.passwd jenkins
+5.visudo give root privillages permissions to jenkins user
+6.vim /etc/ssh/sshd_config configure sshd
+7.systemctl restart sshd
+8.systemctl status sshd
+
+
+______go back  to master server and connect to slave_________
+
+1.su - jenkins login jenkins user
+2.ssh-keygen generate key 
+3.ssh-copy-id jenkins@ slave1 public ip address
+
+
+
+_________jenkins parameters_______
+1.cronsyntax
+2.poll scm
+3.webhook
+
+
+
+________cronsyntax nothing but it can build automatily every minute____________
+________poll scm : when developer change their code or file it can build automatically
+________webhook : it can also build automatically______
+webhook creation: open github take one repository select settings and choose webhook option create payload url it means jenkins server pyublic ip and 8080 port number 
+type json add webhook
+
+
+CONFIGURATION=SYSTEM RAM ,STORAGE,SOFTWARE
+MANGEMENT=INSTALLING NEW PACKAGE UPDATE DELETE ADD  
+YAML = YET ANOTHER LANGUAGE
+ANSIBLE FOLLOW NODES THOURGH SSH KEY
+
+
+
+
+
+_______________________ansible creation__________________
+
+
+1.crate 5 ec2 instances 
+  *ANSIBLE SERVER
+  *DEVELOPER1
+  *DEVELOPER2
+  *QA 1
+  *QA2
+2.connect ansible server with mobaxtream go ec2-user to root user sudo su -
+3.install ansible sudo amazon-linux-extras install ansible2 -y
+4.yum install git python python-pip python-level openssl -y
+5.go ansible hosts path vim /etc/ansible/hosts give nodes private ip address
+
+ex:1 ungrouped hposts, .....
+
+[dev] group
+private ip 1
+private ip 2
+
+[qa] group
+privarte ip 1
+private ip  2 save file 
+
+6.go vi /etc/ansible/ansible.cfg file and uncomment uncomment which one is usage we can see removw # inventory and sudo save file
+7.create ansible user useradd ansible
+8.create password passwd ansible
+9.give root privillages to ansible user
+10.visudo ANSIBLE NOPASSD :ALL AND SAVE FILE
+9.vim /etc/ssh/sshd_config passwdord authentication yes
+10.restart sshd server systemctl restart sshd
+11.systemctl status sshd
+
+
+
+________connect nodes______________________
+1.copy dev1 public ip connect with mobaxtream sudo su -
+2.create ansible user usearadd ansible
+3.create password passwd ansible
+4.visudo ansible NOPAAWS: ALL root previlllages to ansible
+5.config sshd vim /etc/ssh/sshd{_config password authentication yes 
+6.systemctl restart sshd
+7.systemctl status sshd
+
+
+
+______connect dev2______
+1.copy dev2 public ip connect with mobaxtream sudo su -
+2.useradd ansible
+3.passwd ansible
+4.visudo ansible NOPASSWD : ALL
+5 vim /etc/ssh/sshd_config
+6.systemctl restart sshd
+7.systemctl status sshd
+
+
+1.login as ansible in all servers by using    su - ansible 
+2.go ansible server 
+3.generate key  ssh-keygen
+4.connect ssh-copy-id ansible @ localhost or nodes public ip 
+5. check is this connect or not hostname -i
+   exit
+
+connect dev1
+ssh-coipy-id ansible2@dev1 public ip
+hostname -i 
+ exit
+
+
+connet dev2 same process
+
+
+
+
+
+
+______________ansible inventory pattern______________
+
+
+in ansible server have 2 groups so in the real time lot off groups  we can check servers in which group  with help if ansible iventary pattern
+
+
+in the ansible server check nodes which are availabe
+1.ansible all --list-hosts
+2.to check devgroup nodes ansible dev --list-hosts
+3.to check qa group nodes ansible qa --list-hosts
+
+
+to check 100 nodes we have there index 1 st node 0 2nd node 1 3rd node 2    = index start with 0   we can check nodes ip address  with help of index 
+
+ex: ansible dev[0] --list-hosts
+ex:ansible qa[1] --list-hosts
+
+
+
+
+if we want to push the code from ansible server to nodes it can be done in 3 ways
+
+1.Ad-HOC commonds =simple linux commonds used for tempory activites 
+2.modules= single commond
+3.playbooks= more than 1 module is called playbooks its writeen in yaml
+
+
+>>>aD-HOC COMMONDS CAN BE RUN INDIVIDUALLY TO PERFURM QUICK FUNCTIONS.
+>>>GO ANSIBLE SEREVR AND SWITCH TO ANSIBLE SERVER
+>>>
+
+1.ansible dev -a "ls"
+2.ansible dev -a "touch file1"
+3.ansible dev -a "sudo yum install maven -y"
+4ansible dev -ba "yum install maven -y"
+
+
+
+go ansible server and switch ansible user create file dev1 and dev2 nodes >>> ansible dev -a argument "touch f1"
+
+
+
+
+______module_____
+
+
+>>>>ansible ships with number of modules that can be executed directly to remote hosts or playbooks
+>>>go anbsible server and switch to ansible server
+
+
+ansible qa -b -m yum -a "pkg=httpd state=present" 
+ansible qa -b -m yum -a "pkg=httpd state=latest" 
+ansible qa -b -m yum -a "pkg=httpd state =absent" 
+
+
+		 
+connect qa 1 qa 2 servcers with mobaxtream
+both severs qa 1 and qa2 same process follow this steps
+1.sudo su -
+2.useradd ansible
+3.passwd amnsible
+4.visudo\
+5.vim /etc/ssh/sshd_config
+6.systemctl restart sshd
+7.systemctl status sshd
+
+
+switch ansible server to all server su - ansible
+generate key ssh-keygen
+connect ssh-copy-id ansible@localhost or qa dev public ip address
+
+
+now perform module commonds 
+
+
+
+
+create user on under nodes 
+ansible qa -b -m user -a "name=raghu*
+ansible qa -b -m copy -a *src=filename dest=/tmp*   file copy to nodes
+
+
+
+target section :ansible server to nodes we can perfum the task
+variable section:define variables ekeep changing
+task section: module implementation
+
+
+YAML:YET ANOTHER markup language 
+
+for ansible , nearly every yaml file starts with a list 
+
+eash iteam in the list is a key-value pair commonly called dictonary
+
+all yaml files begin with "---" and end with "---"
+ 
+extension for playbook file is .yml
+
+
+
+go to ansible server and login as ansible and create playbook with help of vim abc.yml
+ 
+create yaml file vi vamshi.yml 
+yml file begins with --- 
+hosts=group name dev
+user:ansible -ansible:you are ansible user now
+become:yes -become:become sudo user
+connection:ssh
+
+
+basic playbbok ......
+
+--- #THIS IS MY FIRST PLAYBOOK     THIS IS TASK
+- hosts: dev     this group name
+  user: ansible      this is ansible user
+  become: yes 
+  connection: ssh
+  tasks: 
+    - name: INSTALLING HTTPD ON DEV SERVERS
+      action: yum name=httpd state=present
+  save file esc : wq
+
+
+now excute that file commond >>>>>ansible-playbook vamshi.yml file name
+
+
+now uninstall that file
+go vi vamshi.yml file 
+edit action state=absent and save file
+
+
+
+
+____now vars_____
+
+---# TASK
+  -hosts: dev
+   user : ansible
+   become: yes
+   connection: ssh
+ 
+   Tasks:
+        
+        -name: install httpd on linux
+         action: yum name=httpd state=present 
+
+
+
+
+go vi vamshi.yml file    this is also vars concept simple process 
+
+--- # THIS IS MY FIRST PLAYBOOK
+- hosts: dev
+  become: yes
+  vars:
+    pkgname: maven
+  tasks:
+    - name: INSTALLING MAVEN ON DEV SERVERS
+      action: yum name='{{pkgname}}' state=present
+
+
+save file excute with help of ansible-playbook vamshi.yml
+
+
+
+
+
+__________handlers_____________
+--- # THIS IS MY FIRST PLAYBOOK
+- hosts: dev
+  become: yes
+  tasks:
+    - name: INSTALLING httpd ON DEV SERVERS
+      action: yum name=httpd state=install
+      notify: restart httpd
+  handlers:
+    - name: restarted httpd
+      action: service name=httpd status=restarted
+
+
+_______loops nothoing but 1 task we can do repetedly its called loops its also changing ownership similar files on directories 
+
+you can add maltiple users
+--- # THIS IS MY FIRST PLAYBOOK
+- hosts: dev
+  become: yes
+  tasks:
+    - name: adding users
+      user: name='{{iteam}}' state=present
+      with_items:
+               - vicky
+               - vamshi
+               - abc
+               - madhu
+
+
+
+
+
+___________________________DOCKER CREATION____________________________________
+
+
+1.LAUNCH 1 EC2 INSTANCE AND COONECTWITH MOBAXTREAM GO EC2 USER TO ROOT USER
+2.install docker package yum install docker -y
+3.to check docker version docker --version
+4.to check docker full information docker version
+5.start docker service systemctl restart docker.service
+6.check docker status systemctl status docker
+7.docker installation full informastion check if you want give this commond docker info
+8.take ubuntu image and create container  docker pull ubuntu   it will come local 
+9.to check images docker images
+10.list running containers docker ps
+11.docker ps -a its shows running and stoped containers
+12.search image without docker hub   ---docker search jenkins
+13.create a container for ubuntu image docker run -it ubuntu
+14.to check that container is ubuntu or not check cat /etc/os-release
+15.to change ubuntu container name docker run -it --name vamshi1 ubuntu
+16.if you want to change commond for ubuntu container then docker run -it --name vamshi2 ubuntu /bin/bash
+17.start stoped container docker start vamshi1 is container name
+18.go conntainer inside docker attach vamshi1 is a container name
+19.if you want to stop container the docker stop vamshi1
+
+ 
+________________docker creation_________________________________
+
+
+1.create 1 ec2 instance
+2.connect with mobaxtreAM
+3.install docker yum install docker -y
+4.docker --version to check docker version
+5.docker verion it gives total information
+6.systemctl restart docker.service  doicker service restart
+7.systemctl status docker.service
+docker version it will show full information after restart engine will come
+8.docker info it will show full information
+9.docker pull ubuntu to build a images
+10. docker images to list the images
+11.after image create 1 container 
+12.check containers docker ps its shows runing containers
+
+13.check both runing and stoped containers docker ps -a
+14.docker run redis 
+15.docker run alpine
+16. to show images docker images
+15.see you containers running docker ps or both running and sttoped containers docker ps -a
+16. docker pull its not create container docker run its create by default container
+17.you can also search image in linux without docker hub docker search jenkins
+18.docker run -it ubuntu  interactive mode it means, ubuntu means image name it will go inside of the container
+19.to check container that is correcrt or not cat /etc/os-release
+20.ll its shows files and directories
+21.go exit commond helps to it goes to exit of the container
+check containers docker ps -a it shows default name you can change name docker run -it --name vamshi1 ubuntu 
+21.exit it see your container docker ps -a 
+22.you can also chane commond docker run -it --name vamshi2 ubuntu /bin/bash/
+23 docker ps -a
+24.to start stopped conatiners docker start vamshi1
+25.docker ps to see you running container
+26.go inside of docker docker aatch vamshi1 vamshi1 is container name
+27.exit
+29.docker stopr vamshi3 container name
+
+
+
+____________to build iamage from container__________________
+
+
+
+remove containers docker rm vamshi1 name  
+
+
+1.take ubuntu images docker pull ubuntu
+2.create a container docker run -it --name vamshi1 ubuntu
+3.ll go tmp directory 
+4.create files cat>vam1
+5.exit
+6.conatiner to a bulid a new image we can see container one files docker commit cont-1 ubuntu-1
+7.image - container -image -container 
+8.docker images list images its shows four images 
+9.create container docker run -it --name vamshi2 ubuntu-1
+10.ll cd tmp ll vam1 file will come
+11.crate new file vams 2 cat>vam or vi vam
+12.exit
+docker images
+13.docker commit vamshi2 ubnutu-2
+14.docker images
+docker run -it --name vamshi3 ubuntu-2
+ll cd tmp it will show vam1 vam2 files 
+
+
+in the realtime containers are some softwares willstore in the dockerhub every one can access that files
+
+
+
+
+___________________docker file________________________________ its is automate process 
+
+1.always D is capital letter on docker file
+and start componetes also be capital letter
+  componets  FROM RUN COPY ADD EXPOSE WORKDIR ENV
+
+
+
+
+create 1 ec2 instance 
+install docker yum install docker -y
+docker --version or docker version
+systemctl restart docker
+systemctl status docker 
+vi Dockerfile 
+FROM ubuntu
+RUN echo "hello world" >/tmp/vamshi
+save file 
+docker build -t image1 .
+docker run -it --name cont-1 image1
+ll cd tmp vamshi cat vamshi 
+exit
+go docker file vi Dockerfile
+
+FROM ubuntu
+WORKDIR /tmp
+RUN echo "vamhjivnbvv" >/tmp/vamshi
+ENV name divya
+COPY file1 /tmp
+ADD test.tar.gz /tmp
+
+create 1 file vim file1 
+docker build -t iamge2 .
+docker run -it --name cont-2 image2 /bin/bash
+
+
+
+_________DOCKER VOLUMES___________
+
+we can creat volume two types 
+1.automation 
+2.manual process
+
+
+
+now we can create autoamtion
+1.create one file vim Dockerfile
+2.FROM ubuntu
+  VOLUME ["/vamshi"]
+  RUN touch f1
+3.build imgage ___docker build -t image1
+4.now create container docker run -it --name cont-1 image1
+5. and check vamshi directory it is volume 
+6.exit
+7. and start container dockr start cont-1
+8.go inside docker docker attach cont-1
+9.cd /vamshi
+10.create one file cat>vicky
+11.exit container 
+12.check how many containers are available
+13.share volume file to 1 container to another container====== docker run -it --name cont-2 --privileged=true --volumes-from cont-1 image1 /bin/bash
+14.give ll its shows vamshi volume
+15.go vamshi volume cd vamshi/
+16.give ll its shows vicky file
+17.
+
+
+
+now create manual container
+
+1.check container docker ps -a 
+2.take new conatiner docker run -it --name cont-3 -v /madhu image1 /bin/bash
+3.cd madhu/
+4.ll
+5.cat>madhu
+this is madhus file 
+
+now madhu volume share to another continer 
+1.exit
+2.docker run -it --name cont-4 --privileged=true --volumes-from cont-3 image1 /bin/bash
+3.ll cd madhu volume ll madhu file
+
+
+
+local files to container
+
+1.go ec2 user sudo su 
+2.create 3 files vi f1 f2 f3 
+3.now share this files to ciontiner
+4.go root user sudo su -
+5.docker ps -a
+6. 
