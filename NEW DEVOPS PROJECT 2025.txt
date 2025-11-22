@@ -1,0 +1,146 @@
+
+
+    _____________DEVOPS PROJECT__________________
+    
+
+1) Jenkins server — plugins & global tools
+
+Install these Jenkins plugins (Manage Jenkins → Manage Plugins):
+
+Pipeline, Pipeline: Groovy, Git, GitHub Integration (optional), Maven Integration, SonarQube Scanner, Sonar (scanner plugin), Pipeline: Maven, Deploy to Container Plugin (optional), Credentials.
+
+Add Maven (Manage Jenkins → Global Tool Configuration → Maven):
+
+Name it maven and point to an installed Maven or let Jenkins install automatically.
+
+(Optional) Install Docker or OpenJDK on Jenkins if needed by builds.
+
+2) Create Credentials in Jenkins (do this before using them in the pipeline)
+
+Go to Credentials → System → Global credentials → Add Credentials.
+
+Create:
+
+Git HTTPS / Username with password (if your repo is public you can skip):
+
+Kind: Username with password (or SSH Username with private key if using SSH)
+
+ID: git_credentials (optional)
+
+Sonar token:
+
+Kind: Secret text
+
+Secret: the Sonar token value you provided (store exactly)
+
+ID: sonar_token
+
+Tomcat manager credentials:
+
+Kind: Username with password
+
+Username: tomcat / Password: tomcat
+
+ID: tomcat_credentials
+
+Important: do not hardcode tokens/passwords in the Jenkinsfile. Use the Jenkins credentials IDs above.
+
+3) Configure SonarQube in Jenkins (so withSonarQubeEnv works)
+
+Manage Jenkins → Configure System → SonarQube servers section.
+
+Add SonarQube server:
+
+Name: MySonar (use this name in withSonarQubeEnv in the Jenkinsfile)
+
+Server URL: http://13.235.70.116:9000/
+
+Server authentication: choose Server authentication token and add the token (or select the sonar_token credential).
+
+Save.
+
+
+
+
+
+
+
+
+pipeline {
+  agent any
+
+  tools {
+    maven 'maven'
+  }
+
+  environment {
+    GIT_REPO = 'https://github.com/Vamshi420/registration-app.git'
+    SONAR_HOST = 'http://13.235.70.116:9000'
+    TOMCAT_URL = 'http://65.2.122.222:8080'
+    DEPLOY_CONTEXT = '/registration-app'
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout([$class: 'GitSCM', branches: [[name: '*/main']],
+          userRemoteConfigs: [[url: env.GIT_REPO]]])
+      }
+    }
+
+    stage('Build (Maven)') {
+      steps {
+        sh "mvn -B clean package"
+      }
+      post {
+        success {
+          archiveArtifacts artifacts: 'webapp/target/*.war', fingerprint: true
+        }
+      }
+    }
+
+    stage('SonarQube analysis') {
+      steps {
+        withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_TOKEN')]) {
+          sh """
+            mvn sonar:sonar \
+            -Dsonar.host.url=${SONAR_HOST} \
+            -Dsonar.login=${SONAR_TOKEN}
+          """
+        }
+      }
+    }
+
+    stage('Deploy to Tomcat') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'tomcat_credentials', usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASS')]) {
+          sh '''
+            WAR=$(ls webapp/target/*.war | head -n1)
+
+            if [ -z "$WAR" ]; then
+              echo "WAR file not found!"
+              exit 1
+            fi
+
+            echo "Deploying $WAR to Tomcat..."
+
+            curl -u ${TOMCAT_USER}:${TOMCAT_PASS} \
+                 --upload-file "$WAR" \
+                 "${TOMCAT_URL}/manager/text/deploy?path=${DEPLOY_CONTEXT}&update=true"
+          '''
+        }
+      }
+    }
+
+  }
+
+  post {
+    success {
+      echo 'Pipeline completed successfully!'
+    }
+    failure {
+      echo 'Pipeline failed.'
+    }
+  }
+}
